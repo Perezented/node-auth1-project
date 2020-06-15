@@ -2,8 +2,10 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const session = require("express-session");
-const KnexSessionsStore = require("connect-session-knex")(session); //  install library
+const reqAuth = require("../auth/reqAuth");
+const KnexSessionsStore = require("connect-session-knex")(session);
 const usersRouter = require("../users/usersRouter.js");
+const authRouter = require("../auth/authRouter");
 const dbConnection = require("../data/connection");
 const server = express();
 const sessionConfig = {
@@ -28,7 +30,8 @@ server.use(express.json());
 server.use(cors());
 server.use(session(sessionConfig));
 
-server.use("/api/users", usersRouter);
+server.use("/api/users", reqAuth, usersRouter);
+server.use("/api/auth", authRouter);
 
 server.get("/", (req, res) => {
     res.status(200).json({ message: "home slash of the login page" });
